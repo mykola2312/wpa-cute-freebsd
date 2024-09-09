@@ -1,0 +1,195 @@
+# wpaCute - A graphical wpa_supplicant front end
+================================================
+This is a fork from wpa_gui, shipped with wpa_supplicant version 2.6, which
+has a couple of issues. I did not have tried to send my patches upstream because
+of their terms and my paranoia. I'm pretty sure I read a notice back then
+(around 2018) that further development and maintenance is officially
+discontinued. Unfortunately, I can no longer find that hint today (2024). But
+there are only a handful of commits since 2015 and only two of them are halfway
+code related.
+
+The most annoying issues are fixed for me in this derivative and some things
+changed where I thought it's an improvement. But I'm an average user and haven't
+tested much more than to connect to a few WLAN in WPA2/3 Personal mode. It is
+quite possible that some other things are not working so well. This is mainly
+due to the desolate documentation run around WLAN modes and wpa_supplicant,
+which is at best only halfway comprehensible for full professionals. Any advice
+is welcome.
+
+I use only Arch Linux but tried my best not to broke the code for other systems.
+
+## wpa-cute-freebsd
+Note from [mykola2312](https://github.com/mykola2312) - This repo provides FreeBSD 14.1 built binary of wpa-cute.
+
+To reproduce built all You need is usual Qt development environment. Set ```uic``` like this ```/bin/uic -> /usr/local/bin/uic-qt5```, install QtCreator and all its dependencies. Set ```QMAKESPEC``` to ```/usr/local/share/qt/mkspecs/freebsd-g++``` and You are set!
+
+To install already built package just extract tarboll to the root /
+
+### Last version is 0.8.5, Apr 2024
+---------------------------------
+  - Add a field to filter SSID in scan results
+  - Replace signal strength progress bar with a custom star-meter ★★★☆☆
+  - Fix/Add session support, new option -R
+  - Fix gone menu in main window and actions in tray icon context menu
+  - Add much more info to the tool-tip of the tray icon
+  - Fix: Don't show "Keep running..." message when we quit immediately after
+    a normal start
+  - Add more info to man page, switch man-page source from .sgml to .ronn
+  - Some minor changes
+
+I tend to remove some functions in future versions. So if you use something
+other than WPA2/3 Personal, or Linux please let me know! What I have in mind is
+  - WEP stuff, both offers and these key box
+  - Old WPA (not 2/3) both offers
+  - Some fields like for pairwise
+  - Peers window
+
+Older release notes can you find below. For details see the commit log.
+
+
+Features
+==========
+  - Runs in the background to display the Wi-Fi status icon in the system tray
+  - Scan for networks and connect to them via WPS or enter the data manually
+  - Change, add or remove network profiles
+  - Support for many station modes, from outdated insecure up to WPA3
+  - Small memory foot print, download ~350k, install ~1M, running ~30M
+
+
+Requirements
+==============
+  - Qt-Version >= 5.15
+
+
+Installation
+==============
+Packages
+----------
+Arch Linux has an AUR, search for wpa-cute.
+
+
+From Source
+-------------
+  $ cd src
+  $ qmake       # Or qmake-qt5 or qmake6 to force some Qt version other than
+                # your system default
+  $ make        # To enable debug messages run: make -f Makefile.Debug. When you
+                # switch between Qt5/6 for testing, add -B to force remake all
+
+Because there is no make install target yet, run on Unices
+
+  # install -Dm755 wpa-cute /usr/bin/wpa-cute
+  # install -Dm644 icons/wpa_gui.svg /usr/share/pixmaps/wpa-cute.svg
+  # install -Dm644 wpa-cute.desktop /usr/share/applications/wpa-cute.desktop
+  # install -Dm644 ../doc/wpa-cute.8 /usr/share/man/man8/wpa-cute.8
+
+Non Unices user has to do something similar.
+
+Additional can the man page generated as HTML out of the .ronn file. To
+do so run:
+
+  $ cd ../doc
+  $ make html # or man or all
+
+The "native" man page should already be up to date, as assumed above. To create
+the files is ronn needed. On my Arch was ruby-ronn-ng available which pull a
+bunch of dependencies but cost only 30,65 MiB in total.
+
+
+Post Install Steps
+--------------------
+wpaCute itself need no more configuration but you should ensure that your
+network interfaces will set up properly and that wpa_supplicant is configured
+and running. Consult the man pages of wpa_supplicant and/or your distribution
+documentation how to do that.
+
+Ensure you have the rights to manage the interface in question, typically done
+by set 'ctrl_interface_group=wheel' in the .conf file.
+
+Just as example, here a setup that was enough on my Arch:
+
+  $ cat /etc/wpa_supplicant/wpa_supplicant-wlp2s0.conf
+  ctrl_interface=/run/wpa_supplicant
+  ctrl_interface_group=wheel
+  update_config=1
+
+  $ cat /etc/systemd/network/wlp2s0.network
+  [Match]
+  Name=wlp2s0
+
+  [Network]
+  DHCP=ipv4
+
+  # systemctl start systemd-networkd.service
+  # systemctl start wpa_supplicant@wlp2s0.service
+
+
+Contributing
+==============
+If you intend to submit improvements to the project, please see CONTRIBUTIONS
+file for more information. There is also some TODO list.
+
+
+License
+=========
+
+  wpaCute a is licensed under the BSD license (the one with advertisement clause
+  removed). See COPYING for the full license.
+
+  wpaCute - A graphical wpa_supplicant front end
+  Copyright (C) 2018, 2022, 2024 loh.tar@googlemail.com
+
+  Because wpaCute is a fork from wpa_gui there are rights of previous
+  developers which are highly honored.
+
+  wpa_gui for wpa_supplicant
+  Copyright (C) 2005-2015 Jouni Malinen <j@w1.fi> and contributors
+
+
+Release History
+=================
+0.8.4, Mar 2024
+-----------------
+  - Add support for WPA3-Personal and Opportunistic Wireless Encryption (OWE)
+  - WPA3-Enterprise should also work but I can't try it
+  - Change displayed data in networklist
+  - Split Edit window in two tabs Network/Properties
+  - Fix bad window size when add new network from scan results
+  - Keep the network block clean / No remaining old data after edit
+  - Always use RSN instead of WPA2 as proto
+  - Some minor changes
+
+
+0.8.3, Jul 2022
+-----------------
+  - Only show annoying "..indicating..authorized" message when a WPS run was
+    issued by user
+  - Fix typos in man page
+
+
+0.8.2, Jun 2022
+-----------------
+  - Changed echo mode of password fields. Now the password is shown during
+    editing
+  - Don't crop the network list on start up (ensure the window is wide enough)
+  - Annoying tool-tips of buttons on main window are now suppressed
+  - Improve/Fix status tip about unsaved messages
+  - Compile with Qt6 too
+
+
+0.8.1, Nov 2018
+-----------------
+  - Fix: Fill the NetworkConfig dialog with correct data from scan results
+
+
+0.8, Sep 2018
+---------------
+  - Fix wrong ordering by ID in Networks list
+  - Add id_str to Flags in Networks list
+  - Add Prio to Networks list
+  - Avoid annoying fidgeting of Networks list when list is fuller as space is
+    available
+  - Add options to print info and help to the console
+
+
+Very first version was 0.7, Jul 2018
