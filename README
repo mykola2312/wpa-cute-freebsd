@@ -1,4 +1,4 @@
-wpaCute - A graphical wpa_supplicant front end
+# wpaCute - A graphical wpa_supplicant front end
 ================================================
 This is a fork from wpa_gui, shipped with wpa_supplicant version 2.6, which
 has a couple of issues. I did not have tried to send my patches upstream because
@@ -18,8 +18,14 @@ is welcome.
 
 I use only Arch Linux but tried my best not to broke the code for other systems.
 
+## wpa-cute-freebsd
+Note from [mykola2312](https://github.com/mykola2312) - This repo provides FreeBSD 14.1 built binary of wpa-cute.
 
-Last version is 0.8.5, Apr 2024
+To reproduce built all You need is usual Qt development environment. Set ```uic``` like this ```/bin/uic -> /usr/local/bin/uic-qt5```, install QtCreator and all its dependencies. Set ```QMAKESPEC``` to ```/usr/local/share/qt/mkspecs/freebsd-g++``` and You are set!
+
+To install already built package just extract tarboll to the root /
+
+### Last version is 0.8.5, Apr 2024
 ---------------------------------
   - Add a field to filter SSID in scan results
   - Replace signal strength progress bar with a custom star-meter ★★★☆☆
